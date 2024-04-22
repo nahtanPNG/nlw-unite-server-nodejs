@@ -22,7 +22,7 @@ export async function getAttendeeBadge(app: FastifyInstance) {
             select: {
                 name: true,
                 email: true,
-                event: {
+                event: { // Selecionando o evento que está relacionado com o participante
                     select: {
                         title: true,
                     }

@@ -7,7 +7,7 @@ import { FastifyInstance } from "fastify";
 export async function createEvent(app: FastifyInstance) {
   app.withTypeProvider<ZodTypeProvider>().post(
     "/events",
-    {
+    { //Objeto de configurações da rota
       schema: {
         body: z.object({
           title: z.string().min(4),
