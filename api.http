@@ -2,7 +2,17 @@ POST http://localhost:3333/events
 Content-Type: application/json
 
 {
-    "title": "Unite Summit",
-    "details": "Um evento para quem é apaixonado por programaçao",
-    "maximumAttendees": 1200
+    "title": "Evento de 3d",
+    "details": "Um evento de 3d",
+    "maximumAttendees": 1
+}
+
+###
+
+POST http://localhost:3333/events/f8af9196-8679-41f4-b7fd-c5bd062d5935/attendees
+Content-Type: application/json
+
+{
+    "name": "Nathan Ferreira",
+    "email": "nathan3@nathandev.com.br"
 }
