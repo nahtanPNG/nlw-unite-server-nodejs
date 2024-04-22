@@ -16,3 +16,11 @@ Content-Type: application/json
     "name": "Nathan Ferreira",
     "email": "nathan3@nathandev.com.br"
 }
+
+###
+
+GET http://localhost:3333/events/f8af9196-8679-41f4-b7fd-c5bd062d5935
+
+###
+
+GET http://localhost:3333/attendees/1/badge
