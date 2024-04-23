@@ -4,57 +4,62 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
 export async function getAttendeeBadge(app: FastifyInstance) {
-    app
-    .withTypeProvider<ZodTypeProvider>()
-    .get('/attendees/:attendeeId/badge', {
-        schema: {
-            params: z.object({
-                attendeeId: z.coerce.number().int(), //Ele pode vir de outro tipo, mas quero que vire numéro
+  app.withTypeProvider<ZodTypeProvider>().get(
+    "/attendees/:attendeeId/badge",
+    {
+      schema: {
+        summary: "Get an attendee badge",
+        tags: ['attendees'],
+        params: z.object({
+          attendeeId: z.coerce.number().int(), //Ele pode vir de outro tipo, mas quero que vire numéro
+        }),
+        responde: {
+          200: z.object({
+            badge: z.object({
+              name: z.string(),
+              email: z.string().email(),
+              eventTitle: z.string(),
+              checkInUrl: z.string().url(),
             }),
-            responde: {
-                200: z.object({
-                    badge: z.object({
-                        name: z.string(),
-                        email: z.string().email(),
-                        eventTitle: z.string(),
-                        checkInUrl: z.string().url(),
-                    })
-                })
-            }
-        }
-    }, async (request, reply) => {
-        const { attendeeId } = request.params
+          }),
+        },
+      },
+    },
+    async (request, reply) => {
+      const { attendeeId } = request.params;
 
-        const attendee = await prisma.attendee.findUnique({
+      const attendee = await prisma.attendee.findUnique({
+        select: {
+          name: true,
+          email: true,
+          event: {
+            // Selecionando o evento que está relacionado com o participante
             select: {
-                name: true,
-                email: true,
-                event: { // Selecionando o evento que está relacionado com o participante
-                    select: {
-                        title: true,
-                    }
-                }
+              title: true,
             },
-            where: {
-                id: attendeeId
-            }
-        })
+          },
+        },
+        where: {
+          id: attendeeId,
+        },
+      });
 
-        if (attendee === null) {
-            throw new Error("Attendee not found")
-        }
+      if (attendee === null) {
+        throw new Error("Attendee not found");
+      }
 
-        const baseURL = `${request.protocol}://${request.hostname}`
+      const baseURL = `${request.protocol}://${request.hostname}`;
 
-        const chekInUrl = new URL(`/attendees/${attendeeId}/check-in`, baseURL)
+      const chekInUrl = new URL(`/attendees/${attendeeId}/check-in`, baseURL);
 
-        return reply.send({
-            badge: {
-                name: attendee.name,
-                email: attendee.email,
-                eventTitle: attendee.event.title,
-                checkInUrl: chekInUrl.toString(),
-            }
-        })
-    })
+      return reply.send({
+        badge: {
+          name: attendee.name,
+          email: attendee.email,
+          eventTitle: attendee.event.title,
+          checkInUrl: chekInUrl.toString(),
+        },
+      });
+    }
+  );
 }

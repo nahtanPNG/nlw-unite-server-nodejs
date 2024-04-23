@@ -9,6 +9,8 @@ export async function createEvent(app: FastifyInstance) {
     "/events",
     { //Objeto de configurações da rota
       schema: {
+        summary: "Create an event",
+        tags: ['events'],
         body: z.object({
           title: z.string().min(4),
           details: z.string().nullable(),
